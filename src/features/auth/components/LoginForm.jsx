@@ -33,7 +33,7 @@ export default function LoginForm({
         id: 1,
         username: 'admin',
         role: 'admin',
-        fullName: 'Demo Admin'
+        name: 'Demo Admin'
       }
 
       const dummyToken = 'dummy-jwt-token'
@@ -75,7 +75,7 @@ export default function LoginForm({
 
   return (
     <div className="space-y-8">
-      {/* LOGIN FORM */}
+
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -114,25 +114,24 @@ export default function LoginForm({
             className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-500"
           />
 
-          {/* FORGOT PASSWORD */}
           <div className="mt-3 text-right">
-  <button
-    type="button"
-    onClick={() => window.dispatchEvent(
-      new CustomEvent('openForgotPassword')
-    )}
-    className="text-sm text-emerald-700 hover:underline"
-  >
-    Forgot Password?
-  </button>
-</div>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(
+                new CustomEvent('openForgotPassword')
+              )}
+              className="text-sm text-emerald-700 hover:underline"
+            >
+              Forgot Password?
+           </button>
+          </div>
         </div>
 
         <button className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-700 to-green-600 text-white font-semibold shadow-lg hover:scale-[1.01] transition-all">
           Login
         </button>
 
-        <div className="bg-green-50 border border-green-100 rounded-xl p-4 text-sm text-gray-700">
+        <div className="bg-green-50 border border-green-100 rounded-xl p-3 text-sm text-gray-700">
           <p className="font-semibold text-emerald-700 mb-1">
             Dummy Login Credentials
           </p>
@@ -143,7 +142,7 @@ export default function LoginForm({
       </form>
 
       {/* REGISTER SECTION */}
-      <div className="border-t pt-6">
+      <div className="border-t pt-5">
         <button
           onClick={() => setIsRegisterOpen(!isRegisterOpen)}
           className="w-full py-3 rounded-xl border border-emerald-600 text-emerald-700 font-semibold hover:bg-emerald-50 transition-all"

@@ -1,67 +1,158 @@
-import { useEffect, useState } from 'react'
-import { getCustomersApi, getDashboardApi } from './dashboardApi'
-import ParkCard from '../../shared/components/ParkCard'
+import Header from '../../shared/components/layout/Header'
+import Footer from '../../shared/components/layout/Footer'
 
-export default function AdminPage({ user, token, onLogout }) {
-  const [dash, setDash] = useState(null)
-  const [customers, setCustomers] = useState([])
+import DashboardHeader from './components/DashboardHeader'
+import StatsCard from './components/StatsCard'
+import CashierSection from './components/CashierSection'
+import CustomerTable from './components/CustomerTable'
+import RevenueAnalytics from './components/RevenueAnalytics'
 
-  useEffect(() => {
-    Promise.all([getDashboardApi(token), getCustomersApi(token)]).then(([d, c]) => {
-      setDash(d)
-      setCustomers(c)
-    })
-  }, [token])
+export default function AdminPage({
+  user,
+  onLogout,
+  onNavigate
+}) {
+  const stats = [
+    {
+      title: 'Total Tickets Sold',
+      value: 245
+    },
+    {
+      title: 'Full Park Tickets',
+      value: 120
+    },
+    {
+      title: '10 Activities Tickets',
+      value: 85
+    },
+    {
+      title: 'Total Revenue',
+      value: '₹ 45,000'
+    },
+    {
+      title: 'Cash Revenue',
+      value: '₹ 18,000'
+    },
+    {
+      title: 'UPI Revenue',
+      value: '₹ 20,000'
+    },
+    {
+      title: 'Card Revenue',
+      value: '₹ 7,000'
+    },
+    {
+      title: 'Red Bands Issued',
+      value: 110
+    },
+    {
+      title: 'Blue Bands Issued',
+      value: 135
+    }
+  ]
 
-  if (!dash) return <div className="p-6">Loading...</div>
+  const cashiers = [
+    {
+      name: 'Rahul',
+      sales: 45,
+      collection: 12000
+    },
+    {
+      name: 'Aman',
+      sales: 38,
+      collection: 9800
+    },
+    {
+      name: 'Sneha',
+      sales: 50,
+      collection: 14500
+    }
+  ]
 
-  const cashierEntries = Object.entries(dash.cashier_reports)
+  const customers = [
+    {
+      name: 'Rohit Sharma',
+      mobile: '9876543210',
+      dob: '12-03-1998',
+      visits: 5
+    },
+    {
+      name: 'Priya Singh',
+      mobile: '9988776655',
+      dob: '22-08-2000',
+      visits: 3
+    },
+    {
+      name: 'Amit Verma',
+      mobile: '9090909090',
+      dob: '15-11-1995',
+      visits: 7
+    }
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky to-green-100 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-forest">Admin Dashboard</h2>
-          <div className="text-right">
-            <p className="text-sm">{user.name} ({user.role})</p>
-            <button onClick={onLogout} className="text-sm text-red-600">Logout</button>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <ParkCard title="Today Tickets" value={dash.today_sales.total_tickets_sold} />
-          <ParkCard title="Full Park" value={dash.today_sales.full_park_tickets_count} />
-          <ParkCard title="10 Activities" value={dash.today_sales.ten_activities_tickets_count} />
-          <ParkCard title="Total Revenue" value={`INR ${Number(dash.revenue_reports.total_revenue).toFixed(2)}`} />
-          <ParkCard title="Cash Revenue" value={`INR ${Number(dash.revenue_reports.cash_revenue).toFixed(2)}`} />
-          <ParkCard title="UPI Revenue" value={`INR ${Number(dash.revenue_reports.upi_revenue).toFixed(2)}`} />
-          <ParkCard title="Card Revenue" value={`INR ${Number(dash.revenue_reports.card_revenue).toFixed(2)}`} />
-          <ParkCard title="Red Bands" value={dash.band_reports.red_bands_issued} />
-          <ParkCard title="Blue Bands" value={dash.band_reports.blue_bands_issued} />
-        </div>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-sky-100 via-green-50 to-green-200">
+      <Header 
+      onNavigate={onNavigate}
+      activePage="dashboard"
+      />
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white rounded-xl p-4 shadow">
-            <h3 className="font-semibold text-forest mb-2">Sales by Cashier</h3>
-            {cashierEntries.map(([name, s]) => (
-              <div key={name} className="flex justify-between py-1 border-b text-sm">
-                <span>{name}</span><span>{s.sales_count} tickets | INR {Number(s.collection).toFixed(2)}</span>
-              </div>
+      <main className="flex-1 px-4 py-5 sm:p-6">
+        <div className="max-w-7xl mx-auto">
+          <DashboardHeader
+            user={user}
+            onLogout={onLogout}
+          />
+
+          {/* TODAY SALES */}
+          <h2 className="sm:text-2xl font-bold text-emerald-900 mb-4">
+            Today’s Sales
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+            {stats.slice(0, 3).map(stat => (
+              <StatsCard
+                key={stat.title}
+                title={stat.title}
+                value={stat.value}
+              />
             ))}
           </div>
-          <div className="bg-white rounded-xl p-4 shadow">
-            <h3 className="font-semibold text-forest mb-2">Customer Database</h3>
-            <div className="max-h-64 overflow-auto text-sm">
-              {customers.map(c => (
-                <div key={c.mobile_number} className="py-2 border-b">
-                  <p className="font-medium">{c.customer_name} ({c.mobile_number})</p>
-                  <p>DOB: {c.dob || '-'}</p>
-                  <p>Visits: {c.visit_history.length}</p>
-                </div>
-              ))}
-            </div>
+
+          {/* REVENUE REPORTS */}
+          <h2 className="sm:text-2xl font-bold text-emerald-400 mb-4">
+  Revenue Analytics
+</h2>
+
+<div className="mb-10">
+  <RevenueAnalytics />
+</div>
+
+          {/* BAND REPORTS */}
+          <h2 className="sm:text-2xl font-bold text-emerald-900 mb-4">
+            Band Reports
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
+            {stats.slice(7, 9).map(stat => (
+              <StatsCard
+                key={stat.title}
+                title={stat.title}
+                value={stat.value}
+              />
+            ))}
+          </div>
+
+          {/* CASHIER + CUSTOMER */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CashierSection cashiers={cashiers} />
+
+            <CustomerTable customers={customers} />
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   )
 }
