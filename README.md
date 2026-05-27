@@ -4,6 +4,10 @@ Frontend application for the TenTicket platform.
 
 ---
 
+To Run:
+npm install
+npm run dev
+
 ## Tech Stack
 
 - React
